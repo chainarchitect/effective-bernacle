@@ -141,8 +141,8 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
 
 // Schedule purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNext() {
-    const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-    // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
+    const delay = Math.floor(Math.random() * 480000) + 720000; // 12-20 min 3-5 times per hour 
+    // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min 2-3 times per hour
 
     setTimeout(async () => {
         await simulatePurchase();
@@ -185,3 +185,4 @@ process.on('unhandledRejection', (error) => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
     }, 1800000); // Every 30 min
 })();
+
