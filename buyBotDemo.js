@@ -74,19 +74,19 @@ function getTier(mmvAmount) {
 async function simulatePurchase() {
     try {
         // Random MMV amount: 2,500 - 100,000 (more realistic)
-        const baseMMV = Math.floor(Math.random() * 9750) + 2500;
+        const baseMMV = Math.floor(Math.random() * 97500) + 2500;
         const bonus = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonus;
-        
+
         // Calculate USD (MMV price = $0.008)
         const usdAmount = baseMMV * 0.008;
-        
+
         // Random payment method
         const methods = ['ETH', 'USDT', 'USDT'];
         const method = methods[Math.floor(Math.random() * methods.length)];
-        
+
         // Calculate paid amount using fetched ETH price
-        const paidAmount = method === 'ETH' 
+        const paidAmount = method === 'ETH'
             ? (usdAmount / ETH_PRICE).toFixed(4)
             : usdAmount.toFixed(2);
 
@@ -115,11 +115,12 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
             ]
         };
 
-        // Send as animation (plays inline)
-        await bot.sendAnimation(GROUP_ID, VIDEO_FILE_ID, {
+        // Send video (autoplays at top)
+        await bot.sendVideo(GROUP_ID, VIDEO_FILE_ID, {
             caption: message,
             parse_mode: 'HTML',
-            reply_markup: keyboard
+            reply_markup: keyboard,
+            supports_streaming: true
         });
 
         console.log(`✅ ${tier.label}: ${formatNum(totalMMV)} MMV | $${usdAmount.toFixed(2)} | ${paidAmount} ${method}`);
@@ -130,9 +131,9 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
 
 // Schedule purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNext() {
-    const delay = Math.floor(Math.random() * 6000) + 12000; // 20-30 min
+    const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
     // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-    
+
     setTimeout(async () => {
         await simulatePurchase();
         scheduleNext();
@@ -148,20 +149,19 @@ bot.on('polling_error', (error) => {
 (async () => {
     console.log('🤖 MMV DEMO Bot Starting...');
     console.log(`💬 Posting to: ${GROUP_ID}`);
-    
+
     // Fetch ETH price once
     ETH_PRICE = await fetchETHPrice();
-    
+
     console.log(`⏰ ${new Date().toLocaleString()}`);
     console.log(`🎯 Simulating 2-3 purchases per hour`);
     console.log('━'.repeat(50));
-    
+
     // Start simulation
     scheduleNext();
-    
+
     // Keep alive ping
     setInterval(() => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
     }, 1800000); // Every 30 min
-
 })();
