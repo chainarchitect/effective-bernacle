@@ -7,8 +7,16 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const GROUP_ID = process.env.GROUP_ID;
 const VIDEO_FILE_ID = process.env.VIDEO_FILE_ID;
 
-// Initialize
-const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+// Initialize with better polling config
+const bot = new TelegramBot(BOT_TOKEN, {
+    polling: {
+        interval: 300,
+        autoStart: true,
+        params: {
+            timeout: 10
+        }
+    }
+});
 
 // Global ETH price (fetched once at startup)
 let ETH_PRICE = 3900; // Fallback
@@ -77,16 +85,16 @@ async function simulatePurchase() {
         const baseMMV = Math.floor(Math.random() * 97500) + 2500;
         const bonus = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonus;
-        
+
         // Calculate USD (MMV price = $0.008)
         const usdAmount = baseMMV * 0.008;
-        
+
         // Random payment method
         const methods = ['ETH', 'USDT', 'USDT'];
         const method = methods[Math.floor(Math.random() * methods.length)];
-        
+
         // Calculate paid amount using fetched ETH price
-        const paidAmount = method === 'ETH' 
+        const paidAmount = method === 'ETH'
             ? (usdAmount / ETH_PRICE).toFixed(4)
             : usdAmount.toFixed(2);
 
@@ -134,8 +142,8 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
 // Schedule purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNext() {
     const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-     // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-    
+    // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
+
     setTimeout(async () => {
         await simulatePurchase();
         scheduleNext();
@@ -147,21 +155,31 @@ bot.on('polling_error', (error) => {
     console.error('❌ Telegram error:', error.message);
 });
 
+// Process error handlers
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    setTimeout(() => process.exit(1), 1000);
+});
+
+process.on('unhandledRejection', (error) => {
+    console.error('❌ Unhandled Rejection:', error);
+});
+
 // Startup
 (async () => {
     console.log('🤖 MMV DEMO Bot Starting...');
     console.log(`💬 Posting to: ${GROUP_ID}`);
-    
+
     // Fetch ETH price once
     ETH_PRICE = await fetchETHPrice();
-    
+
     console.log(`⏰ ${new Date().toLocaleString()}`);
     console.log(`🎯 Simulating 2-3 purchases per hour`);
     console.log('━'.repeat(50));
-    
+
     // Start simulation
     scheduleNext();
-    
+
     // Keep alive ping
     setInterval(() => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
