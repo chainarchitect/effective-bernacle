@@ -77,16 +77,16 @@ async function simulatePurchase() {
         const baseMMV = Math.floor(Math.random() * 97500) + 2500;
         const bonus = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonus;
-
+        
         // Calculate USD (MMV price = $0.008)
         const usdAmount = baseMMV * 0.008;
-
+        
         // Random payment method
         const methods = ['ETH', 'USDT', 'USDT'];
         const method = methods[Math.floor(Math.random() * methods.length)];
-
+        
         // Calculate paid amount using fetched ETH price
-        const paidAmount = method === 'ETH'
+        const paidAmount = method === 'ETH' 
             ? (usdAmount / ETH_PRICE).toFixed(4)
             : usdAmount.toFixed(2);
 
@@ -97,8 +97,10 @@ async function simulatePurchase() {
         const message = `
 ${tier.emoji} <b>${tier.label} ALERT!</b>
 
-💰 <b>${paidAmount} ${method}</b> → <b>${formatNum(totalMMV)} $MMV</b>
-🎁 Bonus: +${formatNum(bonus)} MMV (200%)
+💰 ${paidAmount} ${method} = ${formatNum(baseMMV)} $MMV
+🎁 +200% Bonus = ${formatNum(bonus)} $MMV
+━━━━━━━━━━━━━━━
+🚀 TOTAL: ${formatNum(totalMMV)} $MMV
 
 👤 <code>${formatAddr(buyer)}</code>
 
@@ -132,8 +134,8 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
 // Schedule purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNext() {
     const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-    // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
-
+     // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
+    
     setTimeout(async () => {
         await simulatePurchase();
         scheduleNext();
@@ -149,17 +151,17 @@ bot.on('polling_error', (error) => {
 (async () => {
     console.log('🤖 MMV DEMO Bot Starting...');
     console.log(`💬 Posting to: ${GROUP_ID}`);
-
+    
     // Fetch ETH price once
     ETH_PRICE = await fetchETHPrice();
-
+    
     console.log(`⏰ ${new Date().toLocaleString()}`);
     console.log(`🎯 Simulating 2-3 purchases per hour`);
     console.log('━'.repeat(50));
-
+    
     // Start simulation
     scheduleNext();
-
+    
     // Keep alive ping
     setInterval(() => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
