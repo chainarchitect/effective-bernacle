@@ -82,7 +82,7 @@ function getTier(mmvAmount) {
 async function simulatePurchase() {
     try {
         // Random MMV amount: 2,500 - 100,000 (more realistic)
-        const baseMMV = Math.floor(Math.random() * 197500) + 2500;
+        const baseMMV = Math.floor(Math.random() * 97500) + 2500;
         const bonus = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonus;
 
@@ -185,5 +185,6 @@ process.on('unhandledRejection', (error) => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
     }, 1800000); // Every 30 min
 })();
+
 
 
