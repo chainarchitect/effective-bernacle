@@ -1,0 +1,21 @@
+{
+  "name": "mmv-buy-bot",
+  "version": "1.0.0",
+  "description": "MetaMemeVault Telegram Buy Alert Bot",
+  "main": "buyBot.js",
+  "scripts": {
+    "start": "node buyBot.js",
+    "demo": "node buyBotDemo.js",
+    "dev": "nodemon buyBot.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
