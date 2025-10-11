@@ -74,7 +74,7 @@ function getTier(mmvAmount) {
 async function simulatePurchase() {
     try {
         // Random MMV amount: 2,500 - 100,000 (more realistic)
-        const baseMMV = Math.floor(Math.random() * 97500) + 2500;
+        const baseMMV = Math.floor(Math.random() * 9750) + 2500;
         const bonus = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonus;
         
@@ -130,7 +130,7 @@ ${tier.emoji} <b>${tier.label} ALERT!</b>
 
 // Schedule purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNext() {
-    const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
+    const delay = Math.floor(Math.random() * 6000) + 12000; // 20-30 min
     // const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
     
     setTimeout(async () => {
@@ -163,4 +163,5 @@ bot.on('polling_error', (error) => {
     setInterval(() => {
         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
     }, 1800000); // Every 30 min
+
 })();
