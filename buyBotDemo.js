@@ -94,7 +94,7 @@ async function sendAlert(tier, displayAmount, baseMMV, bonusMMV, totalMMV, bonus
         const message = `
 ${tier.emoji} <b>${tier.label} ALERT!</b>
 
-💰 ${displayAmount} = ${formatNum(baseMMV)} $MMV
+${txHash ? `💎` : '💰'} ${displayAmount} = ${formatNum(baseMMV)} $MMV
 🎁 +${bonusPercent}% Bonus = ${formatNum(bonusMMV)} $MMV
 ━━━━━━━━━━━━━━━
 🚀 TOTAL: ${formatNum(totalMMV)} $MMV
@@ -245,3 +245,4 @@ process.on('unhandledRejection', (error) => {
         console.log(`💚 Bot alive - ${new Date().toLocaleTimeString()}`);
     }, 300000); // Every 5 minutes
 })();
+
