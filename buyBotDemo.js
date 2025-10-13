@@ -166,25 +166,26 @@ process.on('unhandledRejection', (error) => {
 });
 
 // Startup
-(async () => {
-    console.log('🤖 MMV DEMO Bot Starting...');
-    console.log(`💬 Posting to: ${GROUP_ID}`);
+// (async () => {
+//     console.log('🤖 MMV DEMO Bot Starting...');
+//     console.log(`💬 Posting to: ${GROUP_ID}`);
 
-    // Fetch ETH price once
-    ETH_PRICE = await fetchETHPrice();
+//     // Fetch ETH price once
+//     ETH_PRICE = await fetchETHPrice();
 
-    console.log(`⏰ ${new Date().toLocaleString()}`);
-    console.log(`🎯 Simulating 2-3 purchases per hour`);
-    console.log('━'.repeat(50));
+//     console.log(`⏰ ${new Date().toLocaleString()}`);
+//     console.log(`🎯 Simulating 2-3 purchases per hour`);
+//     console.log('━'.repeat(50));
 
-    // Start simulation
-    scheduleNext();
+//     // Start simulation
+//     scheduleNext();
 
-    // Keep alive ping
-    setInterval(() => {
-        console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
-    }, 1800000); // Every 30 min
-})();
+//     // Keep alive ping
+//     setInterval(() => {
+//         console.log(`💚 Bot running - ${new Date().toLocaleTimeString()}`);
+//     }, 1800000); // Every 30 min
+// })();
+
 
 
 
