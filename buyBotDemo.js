@@ -162,7 +162,7 @@ contract.on('TokensPurchased', async (buyer, baseTokens, bonusTokens, usdAmount,
 async function simulatePurchase() {
     try {
         // Random MMV amount: 2,500 - 100,000
-        const baseMMV = Math.floor(Math.random() * 97500) + 2500;
+        const baseMMV = Math.floor(Math.random() * 57500) + 2500;
         const bonusMMV = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonusMMV;
 
@@ -192,7 +192,7 @@ async function simulatePurchase() {
 
 // Schedule demo purchases: 2-3 times per hour (20-30 min intervals)
 function scheduleNextDemo() {
-    const delay = Math.floor(Math.random() * 600000) + 1200000; // 20-30 min
+    const delay = Math.floor(Math.random() * 600000) + 3000000; // 50-60 min
     
     setTimeout(async () => {
         await simulatePurchase();
@@ -245,6 +245,7 @@ process.on('unhandledRejection', (error) => {
         console.log(`💚 Bot alive - ${new Date().toLocaleTimeString()}`);
     }, 300000); // Every 5 minutes
 })();
+
 
 
 
