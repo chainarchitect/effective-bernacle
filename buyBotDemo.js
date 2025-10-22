@@ -11,7 +11,7 @@ const RPC_URL = process.env.RPC_URL;
 const PRESALE_CONTRACT = '0xC53fa85B734717CFd999343f6024165f0eC423b7';
 
 // Initialize
-const bot = new TelegramBot(BOT_TOKEN, { 
+const bot = new TelegramBot(BOT_TOKEN, {
     polling: {
         interval: 300,
         autoStart: true,
@@ -134,9 +134,9 @@ contract.on('TokensPurchased', async (buyer, baseTokens, bonusTokens, usdAmount,
         const baseMMV = parseFloat(ethers.formatUnits(baseTokens, 18));
         const bonusMMV = parseFloat(ethers.formatUnits(bonusTokens, 18));
         const totalMMV = baseMMV + bonusMMV;
-        
+
         const usdValue = parseFloat(ethers.formatUnits(usdAmount, 18));
-        
+
         let displayAmount;
         if (isETH) {
             const paidETH = usdValue / ETH_PRICE;
@@ -149,7 +149,7 @@ contract.on('TokensPurchased', async (buyer, baseTokens, bonusTokens, usdAmount,
         const bonusPercent = baseMMV > 0 ? Math.round((bonusMMV / baseMMV) * 100) : 0;
 
         await sendAlert(tier, displayAmount, baseMMV, bonusMMV, totalMMV, bonusPercent, buyer, event.log.transactionHash);
-        
+
         console.log('🔴 REAL TRANSACTION POSTED');
     } catch (error) {
         console.error('❌ Error processing real tx:', error.message);
@@ -183,21 +183,41 @@ async function simulatePurchase() {
         const bonusPercent = 200;
 
         await sendAlert(tier, displayAmount, baseMMV, bonusMMV, totalMMV, bonusPercent, buyer, null);
-        
+
         console.log('🟢 DEMO TRANSACTION POSTED');
     } catch (error) {
         console.error('❌ Error in demo tx:', error.message);
     }
 }
 
-// Schedule demo purchases: 2-3 times per hour (20-30 min intervals)
+// Schedule demo purchases: 2-3 times randomly between 30min - 2hrs intervals
 function scheduleNextDemo() {
-    const delay = Math.floor(Math.random() * 600000) + 3000000; // 50-60 min
-    
+    // Random delay between 30min - 2hrs (1,800,000ms - 7,200,000ms)
+    const minDelay = 1800000;  // 30 minutes
+    const maxDelay = 7200000;  // 2 hours
+    const delay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+
     setTimeout(async () => {
         await simulatePurchase();
-        scheduleNextDemo();
+        scheduleNextDemo(); // Schedule next one with new random delay
     }, delay);
+}
+
+// Start multiple demo schedulers for 2-3 concurrent purchase streams
+function startDemoSchedulers() {
+    // Randomly decide: 2 or 3 concurrent purchase streams
+    const streamCount = Math.random() < 0.5 ? 2 : 3;
+
+    console.log(`🎯 Starting ${streamCount} demo purchase streams`);
+
+    // Start each stream with initial random delay to stagger them
+    for (let i = 0; i < streamCount; i++) {
+        const initialDelay = Math.floor(Math.random() * 1800000); // 0-30min initial stagger
+        setTimeout(() => {
+            console.log(`✅ Demo stream ${i + 1} started`);
+            scheduleNextDemo();
+        }, initialDelay);
+    }
 }
 
 // ========================================
@@ -225,10 +245,10 @@ process.on('unhandledRejection', (error) => {
 // ========================================
 (async () => {
     console.log('🤖 MMV Buy Bot Starting (Real + Demo)...');
-    
+
     // Fetch ETH price
     ETH_PRICE = await fetchETHPrice();
-    
+
     console.log(`📡 Monitoring: ${PRESALE_CONTRACT}`);
     console.log(`💬 Posting to: ${GROUP_ID}`);
     console.log(`🕐 ${new Date().toLocaleString()}`);
@@ -236,18 +256,12 @@ process.on('unhandledRejection', (error) => {
     console.log('━'.repeat(50));
     console.log('✅ Listening for REAL purchases...');
     console.log('✅ Demo purchases scheduled...');
-    
+
     // Start demo simulation
-    scheduleNextDemo();
-    
+    startDemoSchedulers();
+
     // Keep alive
     setInterval(() => {
         console.log(`💚 Bot alive - ${new Date().toLocaleTimeString()}`);
-    }, 300000); // Every 5 minutes
+    }, 600000); // Every 5 minutes
 })();
-
-
-
-
-
-
