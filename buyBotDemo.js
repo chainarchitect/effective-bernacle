@@ -162,7 +162,7 @@ contract.on('TokensPurchased', async (buyer, baseTokens, bonusTokens, usdAmount,
 async function simulatePurchase() {
     try {
         // Random MMV amount: 2,500 - 100,000
-        const baseMMV = Math.floor(Math.random() * 97500) + 2500;
+        const baseMMV = Math.floor(Math.random() * 67500) + 2500;
         const bonusMMV = baseMMV * 2; // 200% bonus
         const totalMMV = baseMMV + bonusMMV;
 
@@ -265,3 +265,4 @@ process.on('unhandledRejection', (error) => {
         console.log(`💚 Bot alive - ${new Date().toLocaleTimeString()}`);
     }, 600000); // Every 5 minutes
 })();
+
