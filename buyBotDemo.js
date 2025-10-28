@@ -21,7 +21,7 @@ const bot = new TelegramBot(BOT_TOKEN, {
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 
 // Global ETH price
-let ETH_PRICE = 2500; // Fallback
+let ETH_PRICE = 3800; // Fallback
 
 // Fetch ETH price from CoinGecko
 async function fetchETHPrice() {
@@ -94,7 +94,7 @@ async function sendAlert(tier, displayAmount, baseMMV, bonusMMV, totalMMV, bonus
         const message = `
 ${tier.emoji} <b>${tier.label} ALERT!</b>
 
-${txHash ? `💎` : '💰'} ${displayAmount} = ${formatNum(baseMMV)} $MMV
+💎 ${displayAmount} = ${formatNum(baseMMV)} $MMV
 🎁 +${bonusPercent}% Bonus = ${formatNum(bonusMMV)} $MMV
 ━━━━━━━━━━━━━━━
 🚀 TOTAL: ${formatNum(totalMMV)} $MMV
@@ -157,70 +157,6 @@ contract.on('TokensPurchased', async (buyer, baseTokens, bonusTokens, usdAmount,
 });
 
 // ========================================
-// DEMO TRANSACTION GENERATOR
-// ========================================
-async function simulatePurchase() {
-    try {
-        // Random MMV amount: 2,500 - 100,000
-        const baseMMV = Math.floor(Math.random() * 27500) + 2500;
-        const bonusMMV = baseMMV * 2; // 200% bonus
-        const totalMMV = baseMMV + bonusMMV;
-
-        // Calculate USD (MMV price = $0.008)
-        const usdAmount = baseMMV * 0.008;
-
-        // Random payment method
-        const methods = ['ETH', 'USDT', 'USDT'];
-        const method = methods[Math.floor(Math.random() * methods.length)];
-
-        const paidAmount = method === 'ETH'
-            ? (usdAmount / ETH_PRICE).toFixed(4)
-            : usdAmount.toFixed(2);
-
-        const displayAmount = `${paidAmount} ${method}`;
-        const tier = getTier(totalMMV);
-        const buyer = randomAddr();
-        const bonusPercent = 200;
-
-        await sendAlert(tier, displayAmount, baseMMV, bonusMMV, totalMMV, bonusPercent, buyer, null);
-
-        console.log('🟢 DEMO TRANSACTION POSTED');
-    } catch (error) {
-        console.error('❌ Error in demo tx:', error.message);
-    }
-}
-
-// Schedule demo purchases: 2-3 times randomly between 30min - 2hrs intervals
-function scheduleNextDemo() {
-    // Random delay between 30min - 2hrs (1,800,000ms - 7,200,000ms)
-    const minDelay = 1800000;  // 30 minutes
-    const maxDelay = 7200000;  // 2 hours
-    const delay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
-
-    setTimeout(async () => {
-        await simulatePurchase();
-        scheduleNextDemo(); // Schedule next one with new random delay
-    }, delay);
-}
-
-// Start multiple demo schedulers for 2-3 concurrent purchase streams
-function startDemoSchedulers() {
-    // Randomly decide: 2 or 3 concurrent purchase streams
-    const streamCount = Math.random() < 0.5 ? 2 : 3;
-
-    console.log(`🎯 Starting ${streamCount} demo purchase streams`);
-
-    // Start each stream with initial random delay to stagger them
-    for (let i = 0; i < streamCount; i++) {
-        const initialDelay = Math.floor(Math.random() * 1800000); // 0-30min initial stagger
-        setTimeout(() => {
-            console.log(`✅ Demo stream ${i + 1} started`);
-            scheduleNextDemo();
-        }, initialDelay);
-    }
-}
-
-// ========================================
 // ERROR HANDLING
 // ========================================
 provider.on('error', (error) => {
@@ -244,7 +180,7 @@ process.on('unhandledRejection', (error) => {
 // STARTUP
 // ========================================
 (async () => {
-    console.log('🤖 MMV Buy Bot Starting (Real + Demo)...');
+    console.log('🤖 MMV Buy Bot Starting (REAL TRANSACTIONS ONLY)...');
 
     // Fetch ETH price
     ETH_PRICE = await fetchETHPrice();
@@ -252,18 +188,11 @@ process.on('unhandledRejection', (error) => {
     console.log(`📡 Monitoring: ${PRESALE_CONTRACT}`);
     console.log(`💬 Posting to: ${GROUP_ID}`);
     console.log(`🕐 ${new Date().toLocaleString()}`);
-    console.log(`🎯 Demo: 2-3 purchases per hour`);
     console.log('━'.repeat(50));
     console.log('✅ Listening for REAL purchases...');
-    console.log('✅ Demo purchases scheduled...');
-
-    // Start demo simulation
-    startDemoSchedulers();
 
     // Keep alive
     setInterval(() => {
         console.log(`💚 Bot alive - ${new Date().toLocaleTimeString()}`);
     }, 600000); // Every 5 minutes
 })();
-
-
